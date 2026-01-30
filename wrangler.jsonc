@@ -1,0 +1,68 @@
+{
+  // ==========================================================================
+  // Docker MCP Server - Wrangler Configuration
+  // ==========================================================================
+  //
+  // MULTI-TENANT ARCHITECTURE:
+  // This server supports multiple tenants. Credentials are passed via request
+  // headers, NOT stored as wrangler secrets. This allows a single deployment
+  // to serve multiple customers.
+  //
+  // Docker API Connection:
+  // - Docker Engine API: tcp://host:2375 or via tunnel
+  // - Docker Hub API: https://hub.docker.com/v2
+  // ==========================================================================
+
+  "name": "primrose-mcp-docker",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-12-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // ==========================================================================
+  // Environment Variables (server-wide configuration, not per-tenant)
+  // ==========================================================================
+  "vars": {
+    "CHARACTER_LIMIT": "50000",
+    "DEFAULT_PAGE_SIZE": "20",
+    "MAX_PAGE_SIZE": "100"
+  },
+
+  // ==========================================================================
+  // Multi-Tenant Authentication (via Request Headers)
+  // ==========================================================================
+  //
+  // Tenant credentials are passed via HTTP headers on each request:
+  //
+  // Required (one of):
+  //   X-Docker-Host: Docker Engine API host (e.g., tcp://host:2375)
+  //   X-Docker-Hub-Token: Docker Hub API token
+  //
+  // Optional:
+  //   X-Docker-TLS-Verify: Enable TLS verification (1/0)
+  //   X-Docker-Cert-Path: Path to TLS certificates
+  //   X-Docker-Hub-Username: Docker Hub username
+
+  // ==========================================================================
+  // KV Namespace (uncomment for caching)
+  // ==========================================================================
+  // Create: npx wrangler kv namespace create "DOCKER_KV"
+  //
+  // "kv_namespaces": [
+  //   {
+  //     "binding": "DOCKER_KV",
+  //     "id": "<YOUR_KV_NAMESPACE_ID>"
+  //   }
+  // ],
+
+  // ==========================================================================
+  // Development
+  // ==========================================================================
+  "dev": {
+    "port": 8787,
+    "local_protocol": "http"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}
